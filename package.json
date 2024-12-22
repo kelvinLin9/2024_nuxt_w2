@@ -1,0 +1,29 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/icon": "^1.7.5",
+    "bootstrap": "^5.3.3",
+    "nuxt": "^3.14.159",
+    "nuxt-swiper": "^1.2.2",
+    "vue": "latest",
+    "vue-router": "latest"
+  },
+  "devDependencies": {
+    "@iconify-json/bi": "^1.2.1",
+    "@iconify-json/fluent": "^1.2.7",
+    "@iconify-json/ic": "^1.2.1",
+    "@iconify-json/material-symbols": "^1.2.6",
+    "@iconify-json/mdi": "^1.2.1",
+    "@samk-dev/nuxt-vcalendar": "^1.0.4",
+    "sass": "^1.69.5"
+  }
+}
