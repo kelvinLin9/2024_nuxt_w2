@@ -6,6 +6,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import LayoutHeader from '~/components/layout/Header.vue'
+import LayoutFooter from '~/components/layout/Footer.vue'
+</script>
 
 <style scoped></style>

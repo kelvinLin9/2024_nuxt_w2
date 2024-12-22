@@ -1,5 +1,9 @@
 <script setup>
+import { useUserStore } from '~/stores/user.js';
 
+const userStore = useUserStore()
+const { loginData } = storeToRefs(userStore)
+const login = userStore.login
 </script>
 
 <template>
@@ -12,7 +16,7 @@
         <h1 class="text-neutral-0 fw-bold">立即開始旅程</h1>
       </div>
 
-      <form class="mb-10">
+      <form class="mb-10" @submit.prevent="login(loginData)">
         <div class="mb-4 fs-8 fs-md-7">
           <label class="mb-2 text-neutral-0 fw-bold" for="email">
             電子信箱
@@ -20,9 +24,9 @@
           <input
             id="email"
             class="form-control p-4 text-neutral-100 fw-medium border-neutral-40"
-            value="jessica@sample.com"
             placeholder="請輸入信箱"
             type="email"
+            v-model="loginData.email"
           />
         </div>
         <div class="mb-4 fs-8 fs-md-7">
@@ -32,9 +36,8 @@
           <input
             id="password"
             class="form-control p-4 text-neutral-100 fw-medium border-neutral-40"
-            value="jessica@sample.com"
             placeholder="請輸入密碼"
-            type="password"
+            v-model="loginData.password"
           />
         </div>
         <div
@@ -60,7 +63,7 @@
         </div>
         <button
           class="btn btn-primary-100 w-100 py-4 text-neutral-0 fw-bold"
-          type="button"
+          type="submit"
         >
           會員登入
         </button>
