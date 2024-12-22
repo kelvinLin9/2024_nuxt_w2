@@ -111,14 +111,6 @@ onUnmounted(() => {
                   class="dropdown-menu py-3 overflow-hidden"
                   style="right: 0; left: auto; border-radius: 20px;"
                 >
-                  <li v-if="isAdmin">
-                    <NuxtLink
-                      class="dropdown-item px-6 py-4"
-                      to="/admin"
-                    >
-                      後台
-                    </NuxtLink>
-                  </li>
                   <li>
                     <NuxtLink
                       v-if="userInfo._id"
