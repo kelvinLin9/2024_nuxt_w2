@@ -1,12 +1,10 @@
 <script setup>
-import { computed, onMounted, reactive, ref } from 'vue';
 
 import { DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
+import Modal from 'bootstrap/js/dist/modal';
 import { useScreens } from 'vue-screen-utils';
 
-import Modal from 'bootstrap/js/dist/modal';
-import { Icon } from '@iconify/vue';
 
 const modal = ref(null);
 
@@ -33,6 +31,10 @@ const emit = defineEmits(['handleDateChange']);
 const props = defineProps({
   dateTime: {
     type: Object,
+    required: true,
+  },
+  maxPeople:{
+    type:Number,
     required: true,
   }
 })
@@ -422,6 +424,14 @@ const clearDate = () => {
 .date-picker :deep(.vc-highlight) {
   width: 44px;
   height: 44px;
+}
+
+.date-picker :deep(.vc-highlight-content-solid) {
+  color:#fff;
+}
+
+.date-picker :deep(.vc-highlight-content-outline) {
+  color:#fff;
 }
 
 .date-picker :deep(.vc-attr) {

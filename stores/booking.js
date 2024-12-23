@@ -1,83 +1,16 @@
 import { defineStore } from "pinia";
 const apiUrl = `${process.env.API_URL}/api/v1`;
-export const useRoomStore = defineStore("roomStore", () => {
-  const { $swal } = useNuxtApp();
-  const cookie = useCookie("auth");
-  const router = useRouter();
-  const roomsData = ref([]);
-  const roomData = ref({});
-  const roomLayout = ref([
-    {
-      title: '市景',
-      isProvide: true,
-    },
-    {
-      title: '獨立衛浴',
-      isProvide: true,
-    },
-    {
-      title: '客廳',
-      isProvide: true,
-    },
-    {
-      title: '書房',
-      isProvide: true,
-    },
-    {
-      title: '樓層電梯',
-      isProvide: true,
-    },
-  ])
+export const useBookingStore = defineStore("bookingStore", () => {
+
   const isLoading = ref(false);
-
-  const getRoomsData = async (id) => {
-    try {
-      const res = await $fetch(`/rooms`, {
-        baseURL: apiUrl,
-      });
-
-      roomsData.value = res.result;
-      console.log(roomsData.value);
-    } catch (error) {
-      await $swal.fire({
-        position: "center",
-        icon: "error",
-        title: "無法取得房型資料...",
-        text: error.response._data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
-  };
-
-  const getRoomData = async (id) => {
-    try {
-      const res = await $fetch(`/rooms/${id}`, {
-        baseURL: apiUrl,
-      });
-
-      roomData.value = res.result;
-      console.log(roomData.value);
-    } catch (error) {
-      await $swal.fire({
-        position: "center",
-        icon: "error",
-        title: "無法取得房型資料...",
-        text: error.response._data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      router.push("/rooms");
-    }
-  };
-
   const bookingInfo = ref({});
+  const bookingPeople = ref(1);
 
   const goBookingPage = (data) => {
     bookingInfo.value = data;
   };
 
-  const orderInfo = ref({});
+  const orderInfo = ref(null);
 
   const orderOncoming = ref([]);
   const orders = ref([]);
@@ -210,12 +143,8 @@ export const useRoomStore = defineStore("roomStore", () => {
 
   return {
     isLoading,
-    roomsData,
-    roomData,
-    roomLayout,
-    getRoomsData,
-    getRoomData,
     bookingInfo,
+    bookingPeople,
     goBookingPage,
     orderOncoming,
     orders,
@@ -225,4 +154,5 @@ export const useRoomStore = defineStore("roomStore", () => {
     createOrder,
     deleteOrder,
   };
-});
+
+})

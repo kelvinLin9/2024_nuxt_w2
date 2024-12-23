@@ -39,11 +39,11 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   css: ["@/assets/css/all.scss"],
   "components": {
-   "dirs": [
-     {
-         "path": "~/components/global",
-         "global": true
-     }
+  "dirs": [
+    {
+      "path": "~/components/global",
+      "global": true
+    }
    ]
   },
   build: {

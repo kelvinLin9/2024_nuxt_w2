@@ -1,13 +1,20 @@
 <script setup>
 import { useRoomStore } from '~/stores/room.js';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
 const roomStore = useRoomStore()
 const { roomsData } = storeToRefs(roomStore)
 const { getRoomsData } = roomStore
 
+// 定義 Swiper 需要的模組
+const modules = [Autoplay, Pagination, Navigation];
+
 onMounted(() => {
   getRoomsData()
 })
-
 </script>
 
 <template>

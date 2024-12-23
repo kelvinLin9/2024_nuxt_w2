@@ -1,11 +1,109 @@
 <script setup>
+import DatePickerModal from '@/components/rooms/DatePickerModal.vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useRoomStore } from '~/stores/room.js';
+import { useBookingStore } from '~/stores/booking.js';
+
+const route = useRoute()
+const router = useRouter()
+
 const roomStore = useRoomStore()
-const { roomData } = storeToRefs(roomStore)
+const { roomData, roomLayout } = storeToRefs(roomStore)
 const { getRoomData } = roomStore
 
+const bookingStore = useBookingStore()
+const { bookingInfo, bookingPeople } = storeToRefs(bookingStore)
+const { getBookingData, goBookingPage } = bookingStore
+
+// to store
+const MAX_BOOKING_PEOPLE = 10;
+const daysCount = ref(0);
+const checkInDate = ref('');
+const checkOutDate = ref('');
+
+
+
+
+const daysFormatOnMobile = (date) => date?.split('-').slice(1, 3).join(' / ');
+
+const formatDate = (date) => {
+  const offsetToUTC8 = date.getHours() + 8;
+  date.setHours(offsetToUTC8);
+  return date.toISOString().split('T')[0];
+};
+
+const currentDate = new Date();
+
+const bookingDate = ref({
+  date: {
+    start: '',
+    end: '',
+  },
+  minDate: new Date(currentDate),
+  maxDate: new Date(currentDate.setFullYear(currentDate.getFullYear() + 1))
+});
+
 onMounted(() => {
-  getRoomData()
+  bookingDate.value.date.start = new Date().toISOString().split('T')[0];
+  // checkOutDate.value = new Date().toISOString().split('T')[0];
+})
+
+const bookingTotalPrice = ref(daysCount.value._value * roomData.value.price|| 1* roomData.value.price)
+
+const handleDateChange = (bookingInfo) => {
+  console.log(bookingInfo)
+  const { start, end } = bookingInfo.date;
+  bookingDate.value.date.start = start;
+  bookingDate.value.date.end = end;
+
+  bookingPeople.value = bookingInfo?.people || 1;
+  daysCount.value = bookingInfo.daysCount;
+  bookingTotalPrice.value = daysCount.value._value * roomData.value.price|| 1* roomData.value.price
+}
+
+const goBooking = () => {
+  const bookingData = {
+    roomId:route.params.roomId,
+    checkInDate: bookingDate.value.date.start,
+    checkOutDate: bookingDate.value.date.end,
+    daysCount: daysCount.value._value,
+    peopleNum: bookingPeople.value,
+    userInfo:{}
+  }
+  router.push({
+    name: 'rooms-roomId-booking',
+    params: {
+      roomId: route.params.roomId
+    }
+  });
+  goBookingPage(bookingData)
+}
+const seoTitle = computed(()=> `Freyja | ${roomData.value.name||''} `)
+const ogUrl = computed(()=> `https://freyja.travel.com.tw/room/${roomData.value._id||''}`)
+useSeoMeta({
+  title:seoTitle,
+  description: roomData.value.description||'',
+  ogTitle: `Freyja | ${roomData.value.name||''} `,
+  ogDescription: roomData.value.description,
+  ogImage: roomData.value.imageUrl,
+  ogUrl:ogUrl,
+  twitterCard: "summary_large_image",
+  twitterTitle: `Freyja | ${roomData.value.name||''}`,
+  twitterDescription: roomData.value.description||'',
+  twitterImage: roomData.value.imageUrl||'',
+})
+
+
+const datePickerModal = ref(null);
+const openModal = () => {
+  datePickerModal.value.openModal();
+}
+//
+
+
+onMounted(() => {
+  console.log(route.params.roomId)
+  getRoomData(route.params.roomId)
 })
 
 </script>
@@ -121,7 +219,7 @@ onMounted(() => {
                   房間格局
                 </h3>
                 <ul class="d-flex flex-wrap gap-6 gap-md-10 p-6 bg-neutral-0 fs-8 fs-md-7 rounded-3 list-unstyled">
-                  <li v-for="layout in roomData.layoutInfo" :key="layout.title" class="d-flex gap-2">
+                  <li v-for="layout in roomLayout" :key="layout.title" class="d-flex gap-2">
                     <Icon
                       v-if="layout.isProvide"
                       class="fs-5 text-primary-100"
@@ -229,7 +327,7 @@ onMounted(() => {
                         id="checkinInput"
                         readonly
                         type="date"
-                        :value="bookingDate.date.start"
+                        v-model="bookingDate.date.start"
                         class="form-control p-4 pt-9 text-neutral-100 fw-medium border-neutral-100 rounded-3"
                         style="min-height: 74px;"
                         placeholder="yyyy-mm-dd"
@@ -248,7 +346,7 @@ onMounted(() => {
                         id="checkoutInput"
                         readonly
                         type="date"
-                        :value="bookingDate.date.end"
+                        v-model="bookingDate.date.end"
                         class="form-control p-4 pt-9 text-neutral-100 fw-medium border-neutral-100 rounded-3"
                         style="min-height: 74px;"
                         placeholder="yyyy-mm-dd"
@@ -312,24 +410,23 @@ onMounted(() => {
                 </div>
   
                 <h5  class="mb-0 text-primary-100 fw-bold">
-                  NT$ {{bookinTotalPrice.toLocaleString()}}
+                  NT$ {{ bookingTotalPrice || 0}}
                 </h5>
-                <NuxtLink
+                <button
                   :to="{ name: 'rooms-roomId-booking', params: { roomId: $route.params.roomId } }"
                   class="btn btn-primary-100 py-4 text-neutral-0 fw-bold rounded-3"
-                  :disabled="bookingDate.date.end === null"
-                  :class="bookingDate.date.end === null?'disabled':''"
+                  :disabled="bookingDate.date.end === ''"
                   @click="goBooking()"
                 >
                   立即預訂
-                </NuxtLink>
+                </button>
               </div>
             </div>
           </div>
         </div>
         
         <div class="d-flex d-md-none justify-content-between align-items-center position-fixed bottom-0 w-100 p-3 bg-neutral-0">
-          <template v-if="bookingDate.date.end === null">
+          <!-- <template v-if="bookingDate.date.end === null">
             <small class="text-neutral-80 fw-medium"><small v-priceformat:TWD="roomData.price">ＮＴ$ 10,000</small> / 晚</small>
             <button
               class="btn btn-primary-100 px-12 py-4 text-neutral-0 fw-bold rounded-3"
@@ -352,7 +449,7 @@ onMounted(() => {
             >
               立即預訂
             </NuxtLink>
-          </template>
+          </template> -->
         </div>
       </section>
   
@@ -360,7 +457,7 @@ onMounted(() => {
         <DatePickerModal
           ref="datePickerModal"
           :date-time="bookingDate"
-          :maxPeople="roomData.maxPeople||MAX_BOOKING_PEOPLE"
+          :maxPeople="roomData.maxPeople || MAX_BOOKING_PEOPLE"
           :min-date="bookingDate.minDate"
           :max-date="bookingDate.maxDate"
           @handle-date-change="handleDateChange"
