@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 const apiUrl = `${process.env.API_URL}/api/v1`;
 export const useBookingStore = defineStore("bookingStore", () => {
-
+  const { $swal } = useNuxtApp();
+  const cookie = useCookie("auth");
   const isLoading = ref(false);
   const bookingInfo = ref({});
   const bookingPeople = ref(1);
@@ -14,6 +15,40 @@ export const useBookingStore = defineStore("bookingStore", () => {
 
   const orderOncoming = ref([]);
   const orders = ref([]);
+
+//
+const currentDate = new Date();
+const bookingDate = ref({
+  date: {
+    start: '',
+    end: '',
+  },
+  minDate: new Date(currentDate),
+  maxDate: new Date(currentDate.setFullYear(currentDate.getFullYear() + 1))
+});
+
+
+//
+const checkInDate = ref("");
+const checkOutDate = ref("");
+const peopleNum = ref(1); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const getOrders = async () => {
     isLoading.value = true;
     try {
@@ -58,7 +93,7 @@ export const useBookingStore = defineStore("bookingStore", () => {
 
   const createOrder = async (data) => {
     isLoading.value = true;
-    console.log('create Order')
+    console.log('create Order', cookie.value?.token, data)
     try {
       const res = await $fetch(`/orders`, {
         baseURL: apiUrl,
@@ -68,17 +103,19 @@ export const useBookingStore = defineStore("bookingStore", () => {
         },
         body: data,
       });
+      console.log(res)
       orderInfo.value = res.result;
       navigateTo(`/booking/confirmation/${res.result._id}`);
     } catch (error) {
-      await $swal.fire({
-        position: "center",
-        icon: "error",
-        title: "無法建立訂單...",
-        text: error.response._data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      console.log(error)
+      // await $swal.fire({
+      //   position: "center",
+      //   icon: "error",
+      //   title: "無法建立訂單...",
+      //   text: error.response._data.message,
+      //   showConfirmButton: false,
+      //   timer: 1500,
+      // });
       isLoading.value = false;
     } 
   };
@@ -153,6 +190,8 @@ export const useBookingStore = defineStore("bookingStore", () => {
     getOrders,
     createOrder,
     deleteOrder,
+
+    bookingDate
   };
 
 })

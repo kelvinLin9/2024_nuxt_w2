@@ -12,14 +12,13 @@ const { roomData, roomLayout } = storeToRefs(roomStore)
 const { getRoomData } = roomStore
 
 const bookingStore = useBookingStore()
-const { bookingInfo, bookingPeople } = storeToRefs(bookingStore)
+const { bookingDate, bookingPeople } = storeToRefs(bookingStore)
 const { getBookingData, goBookingPage } = bookingStore
 
 // to store
 const MAX_BOOKING_PEOPLE = 10;
 const daysCount = ref(0);
-const checkInDate = ref('');
-const checkOutDate = ref('');
+
 
 
 
@@ -32,16 +31,9 @@ const formatDate = (date) => {
   return date.toISOString().split('T')[0];
 };
 
-const currentDate = new Date();
 
-const bookingDate = ref({
-  date: {
-    start: '',
-    end: '',
-  },
-  minDate: new Date(currentDate),
-  maxDate: new Date(currentDate.setFullYear(currentDate.getFullYear() + 1))
-});
+
+
 
 onMounted(() => {
   bookingDate.value.date.start = new Date().toISOString().split('T')[0];
@@ -68,7 +60,15 @@ const goBooking = () => {
     checkOutDate: bookingDate.value.date.end,
     daysCount: daysCount.value._value,
     peopleNum: bookingPeople.value,
-    userInfo:{}
+    userInfo: {
+    address: {
+      zipcode: 0,
+      detail: ""
+    },
+    name: "",
+    phone: "",
+    email: ""
+  }
   }
   router.push({
     name: 'rooms-roomId-booking',

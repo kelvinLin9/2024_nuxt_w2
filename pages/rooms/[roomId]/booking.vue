@@ -1,3 +1,45 @@
+<script setup>
+import { useRoomStore } from '~/stores/room.js';
+import { useBookingStore } from '~/stores/booking.js';
+
+const route = useRoute()
+const router = useRouter()
+
+const roomStore = useRoomStore()
+const { roomData, roomLayout } = storeToRefs(roomStore)
+const { getRoomData } = roomStore
+
+const bookingStore = useBookingStore()
+const { bookingDate, bookingInfo } = storeToRefs(bookingStore)
+const { getBookingData, createOrder } = bookingStore
+
+
+
+
+
+
+
+
+const goBack = () => {
+  router.back();
+};
+const isLoading = ref(false);
+
+const confirmBooking = () => {
+  isLoading.value = true;
+
+  setTimeout(() => {
+    isLoading.value = false;
+    router.push({
+      name: 'booking-confirmation-bookingId',
+      params: {
+        bookingId: 'HH2302183151222',
+      },
+    });
+  }, 1500);
+};
+</script>
+
 <template>
   <NuxtLayout name="default">
     <main class="pt-18 pt-md-30 bg-neutral-120">
@@ -14,7 +56,6 @@
             />
             <h1 class="mb-0 text-neutral-100 fs-3 fw-bold">確認訂房資訊</h1>
           </button>
-
           <div class="row gap-10 gap-md-0">
             <div class="col-12 col-md-7">
               <section>
@@ -41,8 +82,8 @@
                   >
                     <div>
                       <h3 class="title-deco mb-2 fs-7 fw-bold">訂房日期</h3>
-                      <p class="mb-2 fw-medium">入住：12 月 4 日星期二</p>
-                      <p class="mb-0 fw-medium">退房：12 月 6 日星期三</p>
+                      <p class="mb-2 fw-medium">訂房：{{ bookingInfo.checkInDate }}</p>
+                      <p class="mb-0 fw-medium">退房：{{ bookingInfo.checkOutDate }}</p>
                     </div>
                     <button
                       class="bg-transparent border-0 fw-bold text-decoration-underline"
@@ -56,7 +97,7 @@
                   >
                     <div>
                       <h3 class="title-deco mb-2 fs-7 fw-bold">房客人數</h3>
-                      <p class="mb-0 fw-medium">2 人</p>
+                      <p class="mb-0 fw-medium">{{ bookingInfo.peopleNum }} 人</p>
                     </div>
                     <button
                       class="bg-transparent border-0 fw-bold text-decoration-underline"
@@ -95,6 +136,7 @@
                       type="text"
                       class="form-control p-4 fs-8 fs-md-7 rounded-3"
                       placeholder="請輸入姓名"
+                      v-model="bookingInfo.userInfo.name"
                     />
                   </div>
 
@@ -107,6 +149,7 @@
                       type="tel"
                       class="form-control p-4 fs-8 fs-md-7 rounded-3"
                       placeholder="請輸入手機號碼"
+                      v-model="bookingInfo.userInfo.phone"
                     />
                   </div>
 
@@ -119,6 +162,7 @@
                       type="email"
                       class="form-control p-4 fs-8 fs-md-7 rounded-3"
                       placeholder="請輸入電子信箱"
+                      v-model="bookingInfo.userInfo.email"
                     />
                   </div>
 
@@ -147,6 +191,7 @@
                       type="text"
                       class="form-control p-4 fs-8 fs-md-7 rounded-3"
                       placeholder="請輸入詳細地址"
+                      v-model="bookingInfo.userInfo.address.detail"
                     />
                   </div>
                 </div>
@@ -463,7 +508,7 @@
                 <button
                   class="btn btn-primary-100 py-4 text-neutral-0 fw-bold rounded-3"
                   type="button"
-                  @click="confirmBooking"
+                  @click="createOrder(bookingInfo)"
                 >
                   確認訂房
                 </button>
@@ -478,28 +523,7 @@
   </NuxtLayout>
 </template>
 
-<script setup>
-const router = useRouter();
 
-const goBack = () => {
-  router.back();
-};
-const isLoading = ref(false);
-
-const confirmBooking = () => {
-  isLoading.value = true;
-
-  setTimeout(() => {
-    isLoading.value = false;
-    router.push({
-      name: 'booking-confirmation-bookingId',
-      params: {
-        bookingId: 'HH2302183151222',
-      },
-    });
-  }, 1500);
-};
-</script>
 
 <style lang="scss" scoped>
 @import 'bootstrap/scss/mixins/breakpoints';
